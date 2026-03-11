@@ -4,6 +4,7 @@
 # Anggota 1 (Fatin) → baca_file()
 # Anggota 2         → data_splitter()
 # Anggota 3         → count_words() + run_parallel()
+# Anggota 4         → reducer() + tampilkan_output()
 # =============================================================
 
 import os
@@ -108,25 +109,37 @@ def run_parallel(chunks):
 
 
 # =============================================================
+# ANGGOTA 4 — Reducer + Output
+# =============================================================
+
+def reducer(result): #list yang berisi jumlah kata dari setiap chunk
+    total_words = sum(result) #jumahkan semua nilai yang ada didalam list result
+    return total_words #mengembalikan total kata
+
+def tampilkan_output(total_words, nama_file): #total kata dan nama file yang dihitung
+    #Menampilkan hasil akhir ke layar.
+    print("\n===== HASIL PERHITUNGAN =====")
+    print(f"Nama file yang telah di hitung            : {nama_file}")  # menampilkan nama file
+    print(f"Total jumlah kata dari file tersebut      : {total_words}") # menampilkan total kata
+    print("=============================")
+
+
+# =============================================================
 # ALUR UTAMA — sambungkan semua modul
 # =============================================================
 
 if __name__ == "__main__":
-    nama_file   = "brokenstring.txt"        # nama file yang akan diproses
-    num_chunks  = os.cpu_count()            # jumlah chunk = jumlah core CPU (dari Anggota 2)
+    nama_file  = "brokenstring.txt"   # nama file buku / teks besar
 
-    print(f"Jumlah core CPU : {num_chunks}")
+    lines = baca_file(nama_file)      # Anggota 1 → membaca file
 
-    # Anggota 1 → baca file, hasilnya disimpan ke variabel 'baris'
-    baris = baca_file(nama_file)
+    if lines is not None:             # memastikan file berhasil dibaca
+        num_chunks = os.cpu_count()   # Anggota 2 → menentukan jumlah core CPU
 
-    if baris is not None:
-        # Anggota 2 → terima 'baris' dari Anggota 1, bagi jadi beberapa chunk
-        chunks = data_splitter(baris, num_chunks)
+        chunks = data_splitter(lines, num_chunks)  # Anggota 2 → membagi data menjadi beberapa bagian
 
-        # Anggota 3 → terima 'chunks' dari Anggota 2, proses secara paralel
-        results = run_parallel(chunks)
+        results = run_parallel(chunks)             # Anggota 3 → menjalankan proses paralel untuk menghitung kata
 
-        print(f"Data berhasil diproses!")
-        print(f"Hasil tiap proses : {results}")
-        print(f"Total kata        : {sum(results)}")
+        total_words = reducer(results)             # Anggota 4 → gabungkan hasil semua proses
+
+        tampilkan_output(total_words, nama_file)   # Anggota 4 → menampilkan hasil akhir

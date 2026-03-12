@@ -1,20 +1,9 @@
-# =============================================================
 # PARALLEL WORD COUNT — Komputasi Paralel dengan Multiprocessing
-# =============================================================
-# Anggota 1 (Fatin) → baca_file()
-# Anggota 2         → data_splitter()
-# Anggota 3         → count_words() + run_parallel()
-# Anggota 4         → reducer() + tampilkan_output()
-# =============================================================
 
 import os
 from multiprocessing import Process, Manager
 
-
-# =============================================================
-# ANGGOTA 1 — File Reader (Fatin)
-# =============================================================
-
+# Fungsi membaca file
 def baca_file(nama_file):
     try:
         with open(nama_file, 'r', encoding='latin-1') as file:
@@ -22,26 +11,18 @@ def baca_file(nama_file):
         print(f"File '{nama_file}' berhasil dibaca!")
         print(f"Total baris: {len(baris)}")
         return baris
-
     except FileNotFoundError:
         print(f"File '{nama_file}' tidak ada!")
         return None
-
     except Exception as e:
         print(f"Terdapat kesalahan saat membaca file: {e}")
         return None
 
-
-# =============================================================
-# ANGGOTA 2 — Data Splitter
-# =============================================================
-
+# Fungsi Data Splitter
 def data_splitter(lines, num_chunks):
     """Membagi list lines menjadi num_chunks bagian"""
-
     if not lines:
         return [[] for _ in range(num_chunks)]
-
     chunks = []
     total = len(lines)
     ukuran_chunk = total // num_chunks
@@ -56,11 +37,7 @@ def data_splitter(lines, num_chunks):
 
     return chunks
 
-
-# =============================================================
-# ANGGOTA 3 — Multiprocessing Counter
-# =============================================================
-
+# Fungsi Multiprocessing Counter
 def count_words(chunk, results, index):
     """
     Menghitung jumlah kata dalam satu chunk (bagian dari file).
@@ -76,7 +53,6 @@ def count_words(chunk, results, index):
         word_count += len(words)
 
     results[index] = word_count
-
 
 def run_parallel(chunks):
     """
@@ -107,11 +83,7 @@ def run_parallel(chunks):
 
         return list(results)
 
-
-# =============================================================
-# ANGGOTA 4 — Reducer + Output
-# =============================================================
-
+# Fungsi Reducer + Output
 def reducer(result): #list yang berisi jumlah kata dari setiap chunk
     total_words = sum(result) #jumahkan semua nilai yang ada didalam list result
     return total_words #mengembalikan total kata
@@ -122,11 +94,6 @@ def tampilkan_output(total_words, nama_file): #total kata dan nama file yang dih
     print(f"Nama file yang telah di hitung            : {nama_file}")  # menampilkan nama file
     print(f"Total jumlah kata dari file tersebut      : {total_words}") # menampilkan total kata
     print("=============================")
-
-
-# =============================================================
-# ALUR UTAMA — sambungkan semua modul
-# =============================================================
 
 if __name__ == "__main__":
     nama_file  = "brokenstring.txt"   # nama file buku / teks besar
